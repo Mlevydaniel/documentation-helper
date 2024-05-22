@@ -15,15 +15,18 @@ embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
 
 def ingest_docs():
-    loader = ReadTheDocsLoader(
-        "langchain-docs/api.python.langchain.com/en/latest/chains"
-    )
+    loader = ReadTheDocsLoader("langchain-docs/langchain.readthedocs.io/en/latest/")
 
     raw_documents = loader.load()
     print(f"loaded {len(raw_documents)} documents")
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=50)
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=600,
+        chunk_overlap=50,
+        separators=["\n\n", "\n", " ", ""]
+    )
     documents = text_splitter.split_documents(raw_documents)
+
     for doc in documents:
         new_url = doc.metadata["source"]
         new_url = new_url.replace("langchain-docs", "https:/")
